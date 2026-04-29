@@ -1,1 +1,1 @@
-# ScholerShip-Hub-
+# ScholerShip-Hub
