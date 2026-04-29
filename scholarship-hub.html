@@ -1,0 +1,1558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ScholarHub — Your Gateway to Academic Funding</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --midnight: #07090f;
+    --navy: #0d1321;
+    --deep: #111827;
+    --gold: #c9973a;
+    --gold-light: #e8b96a;
+    --gold-pale: #f5dfa0;
+    --cream: #f7f2e9;
+    --ivory: #faf6ef;
+    --muted: #8a8fa8;
+    --dim: #3a3f56;
+    --line: rgba(201,151,58,0.2);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--midnight);
+    color: var(--cream);
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    position: fixed;
+    width: 10px; height: 10px;
+    background: var(--gold);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s;
+  }
+  .cursor-ring {
+    position: fixed;
+    width: 36px; height: 36px;
+    border: 1.5px solid rgba(201,151,58,0.5);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: all 0.15s ease;
+  }
+
+  /* Noise texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; width: 100%; z-index: 900;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 22px 60px;
+    background: linear-gradient(to bottom, rgba(7,9,15,0.95), transparent);
+    backdrop-filter: blur(2px);
+  }
+  .logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px; font-weight: 600; letter-spacing: 0.05em;
+    color: var(--cream);
+    text-decoration: none;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .logo-mark {
+    width: 32px; height: 32px;
+    border: 1.5px solid var(--gold);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; color: var(--gold);
+    position: relative;
+  }
+  .logo-mark::after {
+    content: '';
+    position: absolute;
+    width: 6px; height: 6px;
+    background: var(--gold);
+    border-radius: 50%;
+    bottom: -3px; right: -3px;
+  }
+
+  .nav-links {
+    display: flex; gap: 40px; list-style: none;
+  }
+  .nav-links a {
+    font-size: 13px; font-weight: 400; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--muted);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  .nav-links a:hover { color: var(--cream); }
+
+  .nav-cta {
+    font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 10px 24px;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    text-decoration: none;
+    transition: all 0.3s;
+    position: relative; overflow: hidden;
+  }
+  .nav-cta::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: var(--gold);
+    transform: translateX(-101%);
+    transition: transform 0.3s ease;
+    z-index: -1;
+  }
+  .nav-cta:hover { color: var(--midnight); }
+  .nav-cta:hover::before { transform: translateX(0); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    position: relative;
+    display: flex; align-items: center;
+    padding: 120px 60px 80px;
+    overflow: hidden;
+  }
+
+  /* Radial glow */
+  .hero::after {
+    content: '';
+    position: absolute;
+    width: 800px; height: 800px;
+    background: radial-gradient(circle, rgba(201,151,58,0.08) 0%, transparent 70%);
+    top: -100px; right: -100px;
+    pointer-events: none;
+  }
+
+  /* Animated orbs */
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    animation: drift 12s ease-in-out infinite;
+    pointer-events: none;
+  }
+  .orb-1 {
+    width: 500px; height: 500px;
+    background: rgba(201,151,58,0.06);
+    top: 10%; right: 5%;
+    animation-delay: 0s;
+  }
+  .orb-2 {
+    width: 300px; height: 300px;
+    background: rgba(100,120,200,0.05);
+    bottom: 10%; left: 10%;
+    animation-delay: -4s;
+  }
+  .orb-3 {
+    width: 200px; height: 200px;
+    background: rgba(201,151,58,0.04);
+    top: 60%; right: 30%;
+    animation-delay: -8s;
+  }
+  @keyframes drift {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(20px, -30px) scale(1.05); }
+    66% { transform: translate(-15px, 20px) scale(0.95); }
+  }
+
+  /* Vertical line decoration */
+  .hero-line {
+    position: absolute;
+    left: 60px; top: 140px; bottom: 80px;
+    width: 1px;
+    background: linear-gradient(to bottom, transparent, var(--gold), transparent);
+    opacity: 0.3;
+  }
+
+  .hero-content {
+    max-width: 680px;
+    padding-left: 36px;
+    animation: fadeUp 1s ease both;
+  }
+
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 32px;
+  }
+  .hero-tag::before {
+    content: '';
+    width: 30px; height: 1px;
+    background: var(--gold);
+  }
+
+  h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(52px, 7vw, 90px);
+    font-weight: 300;
+    line-height: 1.0;
+    letter-spacing: -0.01em;
+    margin-bottom: 28px;
+    color: var(--ivory);
+  }
+  h1 em {
+    font-style: italic;
+    color: var(--gold-light);
+  }
+  h1 strong {
+    font-weight: 600;
+    display: block;
+  }
+
+  .hero-desc {
+    font-size: 16px; font-weight: 300; line-height: 1.75;
+    color: var(--muted);
+    max-width: 480px;
+    margin-bottom: 48px;
+  }
+
+  .hero-actions {
+    display: flex; align-items: center; gap: 28px;
+  }
+  .btn-primary {
+    padding: 15px 40px;
+    background: var(--gold);
+    color: var(--midnight);
+    text-decoration: none;
+    font-size: 13px; font-weight: 500; letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: all 0.3s;
+    position: relative;
+  }
+  .btn-primary:hover {
+    background: var(--gold-light);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(201,151,58,0.3);
+  }
+  .btn-ghost {
+    font-size: 13px; letter-spacing: 0.05em;
+    color: var(--muted); text-decoration: none;
+    display: flex; align-items: center; gap: 8px;
+    transition: color 0.3s;
+  }
+  .btn-ghost:hover { color: var(--cream); }
+  .btn-ghost .arrow {
+    width: 20px; height: 1px;
+    background: currentColor;
+    position: relative;
+    transition: width 0.3s;
+  }
+  .btn-ghost:hover .arrow { width: 32px; }
+  .btn-ghost .arrow::after {
+    content: '';
+    position: absolute;
+    right: 0; top: -3px;
+    width: 7px; height: 7px;
+    border-right: 1px solid currentColor;
+    border-top: 1px solid currentColor;
+    transform: rotate(45deg);
+  }
+
+  /* Floating stat cards */
+  .hero-stats {
+    position: absolute;
+    right: 80px; top: 50%;
+    transform: translateY(-50%);
+    display: flex; flex-direction: column; gap: 16px;
+    animation: fadeUp 1s 0.4s ease both;
+  }
+  .stat-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(201,151,58,0.15);
+    padding: 24px 32px;
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+  }
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: var(--gold);
+    opacity: 0.6;
+  }
+  .stat-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(201,151,58,0.05), transparent);
+  }
+  .stat-number {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 42px; font-weight: 600;
+    color: var(--gold-light);
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--muted); margin-top: 6px;
+  }
+
+  /* ── SEARCH ── */
+  .search-section {
+    padding: 0 60px 100px;
+    position: relative; z-index: 2;
+  }
+  .search-container {
+    max-width: 800px;
+    position: relative;
+  }
+  .search-label {
+    font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 16px;
+    display: block;
+  }
+  .search-box {
+    display: flex;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(201,151,58,0.25);
+    transition: border-color 0.3s;
+  }
+  .search-box:focus-within {
+    border-color: var(--gold);
+    box-shadow: 0 0 30px rgba(201,151,58,0.1);
+  }
+  .search-box input {
+    flex: 1;
+    background: transparent;
+    border: none; outline: none;
+    padding: 18px 24px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px; color: var(--cream);
+  }
+  .search-box input::placeholder { color: var(--dim); }
+  .search-box button {
+    padding: 18px 32px;
+    background: var(--gold);
+    border: none; cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px; font-weight: 500;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--midnight);
+    transition: background 0.3s;
+  }
+  .search-box button:hover { background: var(--gold-light); }
+  .search-tags {
+    display: flex; flex-wrap: wrap; gap: 10px;
+    margin-top: 16px;
+  }
+  .search-tag {
+    font-size: 11px; letter-spacing: 0.08em;
+    padding: 6px 14px;
+    border: 1px solid var(--dim);
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+  .search-tag:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    display: flex; align-items: center; gap: 24px;
+    padding: 0 60px;
+    margin-bottom: 100px;
+  }
+  .divider-line { flex: 1; height: 1px; background: var(--line); }
+  .divider-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--dim);
+  }
+
+  /* ── CATEGORIES ── */
+  .categories {
+    padding: 0 60px;
+    margin-bottom: 120px;
+  }
+  .section-header {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    margin-bottom: 56px;
+  }
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 42px; font-weight: 300;
+    color: var(--ivory);
+    line-height: 1.15;
+  }
+  .section-title em { font-style: italic; color: var(--gold-light); }
+  .section-link {
+    font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--gold); text-decoration: none;
+    display: flex; align-items: center; gap: 8px;
+    transition: gap 0.3s;
+  }
+  .section-link:hover { gap: 14px; }
+
+  .categories-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--line);
+  }
+  .cat-card {
+    background: var(--midnight);
+    padding: 40px 32px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.4s;
+  }
+  .cat-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 0; height: 2px;
+    background: var(--gold);
+    transition: width 0.4s ease;
+  }
+  .cat-card:hover { background: rgba(201,151,58,0.04); }
+  .cat-card:hover::after { width: 100%; }
+
+  .cat-icon {
+    font-size: 28px;
+    margin-bottom: 20px;
+    display: block;
+    filter: grayscale(0.3);
+    transition: transform 0.3s;
+  }
+  .cat-card:hover .cat-icon { transform: scale(1.15) rotate(-5deg); }
+  .cat-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px; font-weight: 600;
+    color: var(--cream);
+    margin-bottom: 8px;
+  }
+  .cat-count {
+    font-size: 12px; letter-spacing: 0.05em;
+    color: var(--muted);
+  }
+  .cat-arrow {
+    position: absolute;
+    top: 40px; right: 32px;
+    font-size: 18px; color: var(--gold);
+    opacity: 0;
+    transform: translateX(-10px);
+    transition: all 0.3s;
+  }
+  .cat-card:hover .cat-arrow { opacity: 1; transform: translateX(0); }
+
+  /* ── FEATURED SCHOLARSHIPS ── */
+  .featured {
+    padding: 0 60px;
+    margin-bottom: 120px;
+  }
+  .scholarships-list {
+    display: flex; flex-direction: column;
+    gap: 1px;
+    background: var(--line);
+  }
+  .scholarship-item {
+    background: var(--midnight);
+    display: grid;
+    grid-template-columns: auto 1fr auto auto;
+    align-items: center;
+    gap: 32px;
+    padding: 32px 40px;
+    cursor: pointer;
+    transition: background 0.3s;
+    position: relative;
+  }
+  .scholarship-item:hover {
+    background: rgba(201,151,58,0.03);
+  }
+  .scholarship-item::after {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--gold);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .scholarship-item:hover::after { opacity: 1; }
+
+  .scholarship-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14px; color: var(--dim);
+    width: 28px; text-align: right;
+  }
+  .scholarship-info {}
+  .scholarship-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px; font-weight: 600;
+    color: var(--ivory);
+    margin-bottom: 4px;
+    transition: color 0.3s;
+  }
+  .scholarship-item:hover .scholarship-name { color: var(--gold-light); }
+  .scholarship-meta {
+    font-size: 12px; color: var(--muted); letter-spacing: 0.05em;
+  }
+  .scholarship-tags {
+    display: flex; gap: 8px;
+  }
+  .s-tag {
+    font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 4px 10px;
+    border: 1px solid var(--dim);
+    color: var(--muted);
+  }
+  .s-tag.hot {
+    border-color: rgba(201,151,58,0.4);
+    color: var(--gold);
+  }
+  .scholarship-amount {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px; font-weight: 600;
+    color: var(--gold-light);
+    text-align: right;
+    white-space: nowrap;
+  }
+  .scholarship-deadline {
+    font-size: 11px; color: var(--muted); margin-top: 2px;
+  }
+
+  /* ── MARQUEE ── */
+  .marquee-section {
+    padding: 48px 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    overflow: hidden;
+    margin-bottom: 120px;
+  }
+  .marquee-track {
+    display: flex; gap: 60px;
+    animation: marquee 20s linear infinite;
+    white-space: nowrap;
+  }
+  .marquee-item {
+    display: flex; align-items: center; gap: 16px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px; color: var(--dim);
+    letter-spacing: 0.02em;
+  }
+  .marquee-dot {
+    width: 5px; height: 5px;
+    background: var(--gold);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  @keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* ── HOW IT WORKS ── */
+  .how-section {
+    padding: 0 60px 120px;
+  }
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 60px;
+    margin-top: 60px;
+  }
+  .step { position: relative; }
+  .step-number {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 80px; font-weight: 300;
+    color: rgba(201,151,58,0.12);
+    line-height: 1;
+    margin-bottom: 20px;
+    position: relative;
+  }
+  .step-number::after {
+    content: attr(data-step);
+    position: absolute;
+    font-size: 13px; font-weight: 500;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+    bottom: 12px; left: 4px;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .step-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px; font-weight: 600;
+    color: var(--ivory);
+    margin-bottom: 14px;
+  }
+  .step-desc {
+    font-size: 14px; line-height: 1.8;
+    color: var(--muted);
+  }
+  .step-connector {
+    position: absolute;
+    top: 40px; right: -30px;
+    width: 60px; height: 1px;
+    background: var(--line);
+  }
+  .step-connector::after {
+    content: '';
+    position: absolute;
+    right: 0; top: -3px;
+    width: 7px; height: 7px;
+    border-right: 1px solid var(--gold);
+    border-top: 1px solid var(--gold);
+    transform: rotate(45deg);
+    opacity: 0.5;
+  }
+
+  /* ── CTA BANNER ── */
+  .cta-banner {
+    margin: 0 60px 120px;
+    background: linear-gradient(135deg, rgba(201,151,58,0.12), rgba(201,151,58,0.04));
+    border: 1px solid rgba(201,151,58,0.25);
+    padding: 80px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: relative; overflow: hidden;
+  }
+  .cta-banner::before {
+    content: '"';
+    position: absolute;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 400px; font-weight: 700;
+    color: rgba(201,151,58,0.04);
+    top: -80px; left: 40px;
+    line-height: 1;
+    pointer-events: none;
+  }
+  .cta-text {}
+  .cta-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 46px; font-weight: 300;
+    color: var(--ivory); line-height: 1.1;
+    margin-bottom: 16px;
+  }
+  .cta-title em { font-style: italic; color: var(--gold-light); }
+  .cta-sub {
+    font-size: 14px; color: var(--muted); max-width: 400px;
+  }
+  .cta-actions { display: flex; flex-direction: column; gap: 16px; align-items: flex-end; }
+  .btn-large {
+    padding: 18px 52px;
+    background: var(--gold);
+    color: var(--midnight);
+    text-decoration: none;
+    font-size: 13px; font-weight: 500; letter-spacing: 0.12em;
+    text-transform: uppercase;
+    transition: all 0.3s;
+    white-space: nowrap;
+  }
+  .btn-large:hover {
+    background: var(--gold-light);
+    box-shadow: 0 16px 50px rgba(201,151,58,0.35);
+    transform: translateY(-3px);
+  }
+  .cta-note { font-size: 11px; color: var(--dim); letter-spacing: 0.05em; }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--line);
+    padding: 60px;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 60px;
+  }
+  .footer-brand {}
+  .footer-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px; font-weight: 600;
+    color: var(--cream);
+    margin-bottom: 16px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .footer-desc {
+    font-size: 13px; line-height: 1.8; color: var(--dim);
+    max-width: 260px; margin-bottom: 28px;
+  }
+  .social-links { display: flex; gap: 16px; }
+  .social-link {
+    width: 36px; height: 36px;
+    border: 1px solid var(--dim);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--muted); font-size: 14px; text-decoration: none;
+    transition: all 0.25s;
+  }
+  .social-link:hover { border-color: var(--gold); color: var(--gold); }
+
+  .footer-col h4 {
+    font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 20px;
+  }
+  .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+  .footer-col ul a {
+    font-size: 13px; color: var(--dim); text-decoration: none;
+    transition: color 0.25s;
+  }
+  .footer-col ul a:hover { color: var(--cream); }
+
+  .footer-bottom {
+    border-top: 1px solid var(--line);
+    padding: 24px 60px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .footer-copy { font-size: 12px; color: var(--dim); letter-spacing: 0.03em; }
+
+  /* ── NAV RIGHT ── */
+  .nav-right { display: flex; align-items: center; gap: 20px; }
+  .nav-login {
+    font-size: 13px; font-weight: 400; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--muted);
+    text-decoration: none; transition: color 0.3s;
+  }
+  .nav-login:hover { color: var(--cream); }
+
+  /* ── MODALS ── */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 9000;
+    background: rgba(7,9,15,0.88);
+    backdrop-filter: blur(16px);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.4s ease;
+  }
+  .modal-overlay.active { opacity: 1; pointer-events: all; }
+
+  .modal {
+    position: relative;
+    width: 100%; max-width: 480px;
+    background: #0c0f1a;
+    border: 1px solid rgba(201,151,58,0.2);
+    padding: 56px 52px;
+    transform: translateY(28px) scale(0.97);
+    transition: transform 0.45s cubic-bezier(0.16,1,0.3,1);
+    overflow: hidden;
+  }
+  .modal-overlay.active .modal { transform: translateY(0) scale(1); }
+  .modal::before {
+    content: ''; position: absolute; top:0; left:0;
+    width:40px; height:40px;
+    border-top: 2px solid var(--gold); border-left: 2px solid var(--gold); opacity:0.6;
+  }
+  .modal::after {
+    content: ''; position: absolute; bottom:0; right:0;
+    width:40px; height:40px;
+    border-bottom: 2px solid var(--gold); border-right: 2px solid var(--gold); opacity:0.6;
+  }
+  .modal-glow {
+    position: absolute; width:300px; height:300px;
+    background: radial-gradient(circle, rgba(201,151,58,0.07), transparent 70%);
+    top:-100px; right:-80px; pointer-events:none;
+  }
+  .modal-close {
+    position: absolute; top:18px; right:22px;
+    width:32px; height:32px; display:flex; align-items:center; justify-content:center;
+    cursor:pointer; color:var(--dim); font-size:20px; line-height:1;
+    transition:color 0.25s; background:none; border:none; z-index:2;
+  }
+  .modal-close:hover { color:var(--cream); }
+  .modal-eyebrow {
+    font-size:10px; letter-spacing:0.2em; text-transform:uppercase;
+    color:var(--gold); margin-bottom:10px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .modal-eyebrow::before { content:''; width:20px; height:1px; background:var(--gold); }
+  .modal-title {
+    font-family:'Cormorant Garamond',serif;
+    font-size:36px; font-weight:300; color:var(--ivory); line-height:1.15; margin-bottom:6px;
+  }
+  .modal-title em { font-style:italic; color:var(--gold-light); }
+  .modal-sub { font-size:13px; color:var(--muted); margin-bottom:32px; }
+  .modal-sub a { color:var(--gold); text-decoration:none; transition:color 0.25s; }
+  .modal-sub a:hover { color:var(--gold-light); }
+
+  .form-row { margin-bottom:16px; }
+  .form-row.two-col { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .form-label {
+    display:block; font-size:10px; letter-spacing:0.15em; text-transform:uppercase;
+    color:var(--muted); margin-bottom:7px;
+  }
+  .form-input {
+    width:100%; background:rgba(255,255,255,0.04);
+    border:1px solid rgba(255,255,255,0.1);
+    padding:13px 16px; font-family:'DM Sans',sans-serif;
+    font-size:14px; color:var(--cream); outline:none;
+    transition:border-color 0.3s, box-shadow 0.3s;
+  }
+  .form-input::placeholder { color:var(--dim); }
+  .form-input:focus {
+    border-color:rgba(201,151,58,0.5);
+    box-shadow:0 0 0 3px rgba(201,151,58,0.06);
+  }
+  .form-select {
+    width:100%; background:rgba(255,255,255,0.04);
+    border:1px solid rgba(255,255,255,0.1);
+    padding:13px 16px; font-family:'DM Sans',sans-serif;
+    font-size:14px; color:var(--cream); outline:none; cursor:pointer;
+    appearance:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238a8fa8' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+    background-repeat:no-repeat; background-position:right 14px center;
+    transition:border-color 0.3s;
+  }
+  .form-select:focus { border-color:rgba(201,151,58,0.5); }
+  .form-select option { background:#0c0f1a; }
+
+  .password-wrap { position:relative; }
+  .password-wrap .form-input { padding-right:44px; }
+  .toggle-pw {
+    position:absolute; right:14px; top:50%; transform:translateY(-50%);
+    background:none; border:none; cursor:pointer;
+    color:var(--dim); font-size:16px; transition:color 0.25s; padding:0;
+  }
+  .toggle-pw:hover { color:var(--gold); }
+
+  .pw-strength { display:flex; gap:4px; margin-top:8px; }
+  .pw-bar { flex:1; height:3px; background:rgba(255,255,255,0.07); transition:background 0.4s; }
+  .pw-bar.weak  { background:#e05252; }
+  .pw-bar.fair  { background:#e8a23a; }
+  .pw-bar.strong{ background:#4caf50; }
+  .pw-label { font-size:10px; letter-spacing:0.08em; color:var(--muted); margin-top:5px; min-height:14px; }
+
+  .form-check {
+    display:flex; align-items:flex-start; gap:10px;
+    margin-bottom:22px; margin-top:4px;
+  }
+  .form-check input[type="checkbox"] {
+    width:15px; height:15px; flex-shrink:0; margin-top:3px;
+    accent-color:var(--gold); cursor:pointer;
+  }
+  .form-check label { font-size:12px; color:var(--muted); line-height:1.6; cursor:pointer; }
+  .form-check label a { color:var(--gold); text-decoration:none; }
+
+  .forgot-link {
+    display:block; text-align:right; font-size:11px; letter-spacing:0.05em;
+    color:var(--muted); text-decoration:none;
+    margin-top:-10px; margin-bottom:22px; transition:color 0.25s;
+  }
+  .forgot-link:hover { color:var(--gold); }
+
+  .btn-modal {
+    width:100%; padding:15px; background:var(--gold); color:var(--midnight);
+    border:none; cursor:pointer; font-family:'DM Sans',sans-serif;
+    font-size:13px; font-weight:500; letter-spacing:0.12em; text-transform:uppercase;
+    transition:all 0.3s; position:relative; overflow:hidden;
+  }
+  .btn-modal::after {
+    content:''; position:absolute; inset:0;
+    background:rgba(255,255,255,0.18);
+    transform:translateX(-100%) skewX(-15deg); transition:transform 0.4s ease;
+  }
+  .btn-modal:hover { background:var(--gold-light); box-shadow:0 10px 32px rgba(201,151,58,0.28); }
+  .btn-modal:hover::after { transform:translateX(100%) skewX(-15deg); }
+
+  .modal-divider {
+    display:flex; align-items:center; gap:14px; margin:20px 0;
+  }
+  .modal-divider-line { flex:1; height:1px; background:rgba(255,255,255,0.07); }
+  .modal-divider-text { font-size:11px; letter-spacing:0.1em; color:var(--dim); text-transform:uppercase; }
+
+  .social-auth { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .btn-social {
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    padding:12px; background:transparent;
+    border:1px solid rgba(255,255,255,0.1);
+    color:var(--muted); font-family:'DM Sans',sans-serif;
+    font-size:12px; cursor:pointer; transition:all 0.25s;
+  }
+  .btn-social:hover {
+    border-color:rgba(201,151,58,0.3); color:var(--cream);
+    background:rgba(201,151,58,0.04);
+  }
+
+  .toast {
+    position:fixed; bottom:36px; left:50%;
+    transform:translateX(-50%) translateY(16px);
+    background:#1a1f30; border:1px solid rgba(201,151,58,0.3);
+    padding:14px 28px; font-size:13px; color:var(--cream);
+    z-index:9999; opacity:0; pointer-events:none;
+    transition:all 0.35s ease;
+    display:flex; align-items:center; gap:12px;
+  }
+  .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+  .toast-icon { color:var(--gold); font-size:16px; }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .fade-in {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+</head>
+<body>
+
+<!-- Cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="logo">
+    <div class="logo-mark">S</div>
+    ScholarHub
+  </a>
+  <ul class="nav-links">
+    <li><a href="#">Scholarships</a></li>
+    <li><a href="#">Categories</a></li>
+    <li><a href="#">Deadlines</a></li>
+    <li><a href="#">Resources</a></li>
+    <li><a href="#">Stories</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="#" class="nav-login" id="openLogin">Log In</a>
+    <a href="#" class="nav-cta" id="openSignup">Get Started</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="hero-line"></div>
+
+  <div class="hero-content">
+    <div class="hero-tag">Curated Scholarship Intelligence</div>
+    <h1>
+      Fund Your<br>
+      <em>Brightest</em><br>
+      <strong>Future.</strong>
+    </h1>
+    <p class="hero-desc">
+      Access thousands of scholarships, grants, and fellowships — meticulously curated and matched to your academic profile. Your next opportunity is waiting.
+    </p>
+    <div class="hero-actions">
+      <a href="#" class="btn-primary">Browse Scholarships</a>
+      <a href="#" class="btn-ghost">
+        <span class="arrow"></span>
+        How it works
+      </a>
+    </div>
+  </div>
+
+  <div class="hero-stats">
+    <div class="stat-card">
+      <div class="stat-number" data-target="12400">0</div>
+      <div class="stat-label">Active Scholarships</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number" data-target="850">0</div>
+      <div class="stat-label">Funding Partners</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number" data-target="98">0</div>
+      <div class="stat-label">Success Rate %</div>
+    </div>
+  </div>
+</section>
+
+<!-- SEARCH -->
+<section class="search-section">
+  <span class="search-label">Find your scholarship</span>
+  <div class="search-container">
+    <div class="search-box">
+      <input type="text" placeholder="Search by field, country, degree level, or amount…">
+      <button>Search</button>
+    </div>
+    <div class="search-tags">
+      <span class="search-tag">🇺🇸 USA</span>
+      <span class="search-tag">🇬🇧 UK</span>
+      <span class="search-tag">🇩🇪 Germany</span>
+      <span class="search-tag">Fully Funded</span>
+      <span class="search-tag">STEM</span>
+      <span class="search-tag">Masters</span>
+      <span class="search-tag">PhD</span>
+      <span class="search-tag">Undergraduate</span>
+    </div>
+  </div>
+</section>
+
+<!-- DIVIDER -->
+<div class="divider">
+  <div class="divider-line"></div>
+  <span class="divider-text">Explore by Category</span>
+  <div class="divider-line"></div>
+</div>
+
+<!-- CATEGORIES -->
+<section class="categories fade-in">
+  <div class="section-header">
+    <h2 class="section-title">Find by <em>Field</em><br>of Study</h2>
+    <a href="#" class="section-link">All categories →</a>
+  </div>
+  <div class="categories-grid">
+    <div class="cat-card">
+      <span class="cat-icon">⚗️</span>
+      <div class="cat-name">Science & Research</div>
+      <div class="cat-count">2,340 scholarships</div>
+      <div class="cat-arrow">→</div>
+    </div>
+    <div class="cat-card">
+      <span class="cat-icon">💻</span>
+      <div class="cat-name">Technology & Engineering</div>
+      <div class="cat-count">1,980 scholarships</div>
+      <div class="cat-arrow">→</div>
+    </div>
+    <div class="cat-card">
+      <span class="cat-icon">🎨</span>
+      <div class="cat-name">Arts & Humanities</div>
+      <div class="cat-count">1,420 scholarships</div>
+      <div class="cat-arrow">→</div>
+    </div>
+    <div class="cat-card">
+      <span class="cat-icon">⚕️</span>
+      <div class="cat-name">Medicine & Health</div>
+      <div class="cat-count">1,650 scholarships</div>
+      <div class="cat-arrow">→</div>
+    </div>
+    <div class="cat-card">
+      <span class="cat-icon">📊</span>
+      <div class="cat-name">Business & Economics</div>
+      <div class="cat-count">1,290 scholarships</div>
+      <div class="cat-arrow">→</div>
+    </div>
+    <div class="cat-card">
+      <span class="cat-icon">⚖️</span>
+      <div class="cat-name">Law & Social Sciences</div>
+      <div class="cat-count">980 scholarships</div>
+      <div class="cat-arrow">→</div>
+    </div>
+    <div class="cat-card">
+      <span class="cat-icon">🌍</span>
+      <div class="cat-name">Environmental Studies</div>
+      <div class="cat-count">760 scholarships</div>
+      <div class="cat-arrow">→</div>
+    </div>
+    <div class="cat-card">
+      <span class="cat-icon">✏️</span>
+      <div class="cat-name">Education & Teaching</div>
+      <div class="cat-count">890 scholarships</div>
+      <div class="cat-arrow">→</div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURED SCHOLARSHIPS -->
+<section class="featured fade-in" style="margin-top: 120px;">
+  <div class="section-header">
+    <h2 class="section-title">Featured <em>Opportunities</em></h2>
+    <a href="#" class="section-link">View all →</a>
+  </div>
+  <div class="scholarships-list">
+    <div class="scholarship-item">
+      <div class="scholarship-num">01</div>
+      <div class="scholarship-info">
+        <div class="scholarship-name">Gates Cambridge Scholarship</div>
+        <div class="scholarship-meta">University of Cambridge · United Kingdom · Postgraduate</div>
+      </div>
+      <div class="scholarship-tags">
+        <span class="s-tag hot">Fully Funded</span>
+        <span class="s-tag">All Fields</span>
+      </div>
+      <div>
+        <div class="scholarship-amount">$50,000+</div>
+        <div class="scholarship-deadline">Deadline: Oct 13, 2025</div>
+      </div>
+    </div>
+    <div class="scholarship-item">
+      <div class="scholarship-num">02</div>
+      <div class="scholarship-info">
+        <div class="scholarship-name">Chevening Scholarship</div>
+        <div class="scholarship-meta">UK Government · United Kingdom · Masters</div>
+      </div>
+      <div class="scholarship-tags">
+        <span class="s-tag hot">Fully Funded</span>
+        <span class="s-tag">Leadership</span>
+      </div>
+      <div>
+        <div class="scholarship-amount">Full Tuition</div>
+        <div class="scholarship-deadline">Deadline: Nov 5, 2025</div>
+      </div>
+    </div>
+    <div class="scholarship-item">
+      <div class="scholarship-num">03</div>
+      <div class="scholarship-info">
+        <div class="scholarship-name">Fulbright Program</div>
+        <div class="scholarship-meta">US State Department · USA · Graduate</div>
+      </div>
+      <div class="scholarship-tags">
+        <span class="s-tag hot">Hot</span>
+        <span class="s-tag">Research</span>
+      </div>
+      <div>
+        <div class="scholarship-amount">$40,000</div>
+        <div class="scholarship-deadline">Deadline: Oct 1, 2025</div>
+      </div>
+    </div>
+    <div class="scholarship-item">
+      <div class="scholarship-num">04</div>
+      <div class="scholarship-info">
+        <div class="scholarship-name">DAAD Scholarship</div>
+        <div class="scholarship-meta">German Academic Exchange · Germany · All Levels</div>
+      </div>
+      <div class="scholarship-tags">
+        <span class="s-tag">Fully Funded</span>
+        <span class="s-tag">STEM</span>
+      </div>
+      <div>
+        <div class="scholarship-amount">€34,000</div>
+        <div class="scholarship-deadline">Deadline: Dec 15, 2025</div>
+      </div>
+    </div>
+    <div class="scholarship-item">
+      <div class="scholarship-num">05</div>
+      <div class="scholarship-info">
+        <div class="scholarship-name">Rhodes Scholarship</div>
+        <div class="scholarship-meta">Rhodes Trust · Oxford University · Postgraduate</div>
+      </div>
+      <div class="scholarship-tags">
+        <span class="s-tag hot">Prestigious</span>
+        <span class="s-tag">Leadership</span>
+      </div>
+      <div>
+        <div class="scholarship-amount">£18,180/yr</div>
+        <div class="scholarship-deadline">Deadline: Aug 31, 2025</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-section" style="margin-top: 120px;">
+  <div class="marquee-track">
+    <div class="marquee-item"><span class="marquee-dot"></span>Harvard University</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>MIT</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>University of Oxford</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Stanford University</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Cambridge University</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>ETH Zurich</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Yale University</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Imperial College London</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Princeton University</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>National University of Singapore</div>
+    <!-- duplicate for seamless loop -->
+    <div class="marquee-item"><span class="marquee-dot"></span>Harvard University</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>MIT</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>University of Oxford</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Stanford University</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Cambridge University</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>ETH Zurich</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Yale University</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Imperial College London</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Princeton University</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>National University of Singapore</div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section class="how-section fade-in">
+  <div class="section-header">
+    <h2 class="section-title">How <em>ScholarHub</em><br>Works</h2>
+  </div>
+  <div class="steps">
+    <div class="step">
+      <div class="step-number" data-step="01">01</div>
+      <div class="step-title">Build Your Profile</div>
+      <p class="step-desc">Tell us about your academic background, field of interest, nationality, and financial needs. Our system builds your opportunity fingerprint in minutes.</p>
+      <div class="step-connector"></div>
+    </div>
+    <div class="step">
+      <div class="step-number" data-step="02">02</div>
+      <div class="step-title">Get Matched</div>
+      <p class="step-desc">Our intelligent matching engine scans thousands of live scholarships and surfaces the ones you're most likely to win — ranked by fit score and deadline urgency.</p>
+      <div class="step-connector"></div>
+    </div>
+    <div class="step">
+      <div class="step-number" data-step="03">03</div>
+      <div class="step-title">Apply with Confidence</div>
+      <p class="step-desc">Access preparation guides, past winning essays, and expert checklists for each scholarship. Track all your applications from a single elegant dashboard.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<div class="cta-banner fade-in">
+  <div class="cta-text">
+    <div class="cta-title">Your education<br>deserves <em>investment.</em></div>
+    <p class="cta-sub">Join over 120,000 students who found their path to funding through ScholarHub. No cost, no commitment — just opportunity.</p>
+  </div>
+  <div class="cta-actions">
+    <a href="#" class="btn-large">Create Free Account</a>
+    <span class="cta-note">No credit card required · Free forever</span>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">
+    <div class="footer-logo">
+      <div class="logo-mark" style="width:28px;height:28px;font-size:12px;">S</div>
+      ScholarHub
+    </div>
+    <p class="footer-desc">Connecting ambitious students with the funding they deserve, worldwide. Curated. Verified. Timely.</p>
+    <div class="social-links">
+      <a href="#" class="social-link">𝕏</a>
+      <a href="#" class="social-link">in</a>
+      <a href="#" class="social-link">▶</a>
+    </div>
+  </div>
+  <div class="footer-col">
+    <h4>Discover</h4>
+    <ul>
+      <li><a href="#">All Scholarships</a></li>
+      <li><a href="#">Fully Funded</a></li>
+      <li><a href="#">By Country</a></li>
+      <li><a href="#">By Field</a></li>
+      <li><a href="#">New Listings</a></li>
+    </ul>
+  </div>
+  <div class="footer-col">
+    <h4>Resources</h4>
+    <ul>
+      <li><a href="#">Essay Guides</a></li>
+      <li><a href="#">Interview Tips</a></li>
+      <li><a href="#">Success Stories</a></li>
+      <li><a href="#">Scholarship Blog</a></li>
+      <li><a href="#">Webinars</a></li>
+    </ul>
+  </div>
+  <div class="footer-col">
+    <h4>Company</h4>
+    <ul>
+      <li><a href="#">About Us</a></li>
+      <li><a href="#">For Organizations</a></li>
+      <li><a href="#">Partnerships</a></li>
+      <li><a href="#">Privacy Policy</a></li>
+      <li><a href="#">Contact</a></li>
+    </ul>
+  </div>
+</footer>
+<div class="footer-bottom">
+  <span class="footer-copy">© 2025 ScholarHub. All rights reserved.</span>
+  <span class="footer-copy">Empowering scholars worldwide.</span>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span class="toast-icon">✦</span>
+  <span id="toastMsg">Welcome to ScholarHub!</span>
+</div>
+
+<!-- LOGIN MODAL -->
+<div class="modal-overlay" id="loginModal">
+  <div class="modal">
+    <div class="modal-glow"></div>
+    <button class="modal-close" data-close="loginModal">✕</button>
+    <div class="modal-eyebrow">Welcome Back</div>
+    <h2 class="modal-title">Sign in to <em>ScholarHub</em></h2>
+    <p class="modal-sub">New here? <a href="#" id="switchToSignup">Create a free account →</a></p>
+
+    <div class="form-row">
+      <label class="form-label">Email Address</label>
+      <input type="email" class="form-input" placeholder="you@university.edu" id="loginEmail">
+    </div>
+    <div class="form-row">
+      <label class="form-label">Password</label>
+      <div class="password-wrap">
+        <input type="password" class="form-input" placeholder="••••••••" id="loginPassword">
+        <button class="toggle-pw" data-target="loginPassword">👁</button>
+      </div>
+    </div>
+    <a href="#" class="forgot-link">Forgot your password?</a>
+
+    <div class="form-check">
+      <input type="checkbox" id="rememberMe">
+      <label for="rememberMe">Keep me signed in on this device</label>
+    </div>
+
+    <button class="btn-modal" id="loginBtn">Sign In</button>
+
+    <div class="modal-divider">
+      <div class="modal-divider-line"></div>
+      <span class="modal-divider-text">or continue with</span>
+      <div class="modal-divider-line"></div>
+    </div>
+    <div class="social-auth">
+      <button class="btn-social">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+        Google
+      </button>
+      <button class="btn-social">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.17 6.839 9.49.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.604-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.167 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+        GitHub
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- SIGNUP MODAL -->
+<div class="modal-overlay" id="signupModal">
+  <div class="modal">
+    <div class="modal-glow"></div>
+    <button class="modal-close" data-close="signupModal">✕</button>
+    <div class="modal-eyebrow">Join ScholarHub</div>
+    <h2 class="modal-title">Start your <em>journey</em></h2>
+    <p class="modal-sub">Already have an account? <a href="#" id="switchToLogin">Sign in →</a></p>
+
+    <div class="form-row two-col">
+      <div>
+        <label class="form-label">First Name</label>
+        <input type="text" class="form-input" placeholder="Alex">
+      </div>
+      <div>
+        <label class="form-label">Last Name</label>
+        <input type="text" class="form-input" placeholder="Morgan">
+      </div>
+    </div>
+    <div class="form-row">
+      <label class="form-label">Email Address</label>
+      <input type="email" class="form-input" placeholder="you@university.edu">
+    </div>
+    <div class="form-row">
+      <label class="form-label">Study Level</label>
+      <select class="form-select">
+        <option value="" disabled selected>Select your level</option>
+        <option>Undergraduate</option>
+        <option>Masters</option>
+        <option>PhD / Doctorate</option>
+        <option>Postdoctoral</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label class="form-label">Password</label>
+      <div class="password-wrap">
+        <input type="password" class="form-input" placeholder="Create a strong password" id="signupPassword">
+        <button class="toggle-pw" data-target="signupPassword">👁</button>
+      </div>
+      <div class="pw-strength">
+        <div class="pw-bar" id="bar1"></div>
+        <div class="pw-bar" id="bar2"></div>
+        <div class="pw-bar" id="bar3"></div>
+        <div class="pw-bar" id="bar4"></div>
+      </div>
+      <div class="pw-label" id="pwLabel"></div>
+    </div>
+
+    <div class="form-check">
+      <input type="checkbox" id="agreeTerms">
+      <label for="agreeTerms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>. I'll receive scholarship alerts and updates.</label>
+    </div>
+
+    <button class="btn-modal" id="signupBtn">Create My Account</button>
+
+    <div class="modal-divider">
+      <div class="modal-divider-line"></div>
+      <span class="modal-divider-text">or sign up with</span>
+      <div class="modal-divider-line"></div>
+    </div>
+    <div class="social-auth">
+      <button class="btn-social">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+        Google
+      </button>
+      <button class="btn-social">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.17 6.839 9.49.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.604-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.167 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+        GitHub
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  function animateCursor() {
+    cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
+    rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+    requestAnimationFrame(animateCursor);
+  }
+  animateCursor();
+  document.querySelectorAll('a, button, .cat-card, .scholarship-item, .search-tag').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.transform = 'translate(-50%,-50%) scale(2)';
+      ring.style.transform = 'translate(-50%,-50%) scale(1.5)';
+      ring.style.opacity = '0.5';
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.style.transform = 'translate(-50%,-50%) scale(1)';
+      ring.style.transform = 'translate(-50%,-50%) scale(1)';
+      ring.style.opacity = '1';
+    });
+  });
+
+  // Animated stat counters
+  function animateCounter(el, target, suffix = '') {
+    let current = 0;
+    const duration = 2000;
+    const step = target / (duration / 16);
+    const timer = setInterval(() => {
+      current = Math.min(current + step, target);
+      el.textContent = Math.floor(current).toLocaleString() + suffix;
+      if (current >= target) clearInterval(timer);
+    }, 16);
+  }
+  const statNumbers = document.querySelectorAll('.stat-number[data-target]');
+  let statsAnimated = false;
+  const statsObserver = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting && !statsAnimated) {
+      statsAnimated = true;
+      statNumbers.forEach(el => {
+        const target = parseInt(el.dataset.target);
+        animateCounter(el, target);
+      });
+    }
+  });
+  if (statNumbers[0]) statsObserver.observe(statNumbers[0]);
+
+  // Scroll fade-in
+  const fadeEls = document.querySelectorAll('.fade-in');
+  const fadeObserver = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 80);
+      }
+    });
+  }, { threshold: 0.12 });
+  fadeEls.forEach(el => fadeObserver.observe(el));
+
+  // ── MODAL LOGIC ──
+  function openModal(id) {
+    document.getElementById(id).classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal(id) {
+    document.getElementById(id).classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  document.getElementById('openLogin').addEventListener('click', e => { e.preventDefault(); openModal('loginModal'); });
+  document.getElementById('openSignup').addEventListener('click', e => { e.preventDefault(); openModal('signupModal'); });
+  document.querySelectorAll('[data-close]').forEach(btn => {
+    btn.addEventListener('click', () => closeModal(btn.dataset.close));
+  });
+  document.querySelectorAll('.modal-overlay').forEach(ov => {
+    ov.addEventListener('click', e => { if (e.target === ov) closeModal(ov.id); });
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') document.querySelectorAll('.modal-overlay.active').forEach(m => closeModal(m.id));
+  });
+  document.getElementById('switchToSignup').addEventListener('click', e => {
+    e.preventDefault(); closeModal('loginModal'); setTimeout(() => openModal('signupModal'), 200);
+  });
+  document.getElementById('switchToLogin').addEventListener('click', e => {
+    e.preventDefault(); closeModal('signupModal'); setTimeout(() => openModal('loginModal'), 200);
+  });
+
+  // Password visibility toggle
+  document.querySelectorAll('.toggle-pw').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const input = document.getElementById(btn.dataset.target);
+      if (input.type === 'password') { input.type = 'text'; btn.textContent = '🙈'; }
+      else { input.type = 'password'; btn.textContent = '👁'; }
+    });
+  });
+
+  // Password strength meter
+  const pwInput = document.getElementById('signupPassword');
+  const bars = [document.getElementById('bar1'), document.getElementById('bar2'), document.getElementById('bar3'), document.getElementById('bar4')];
+  const pwLabel = document.getElementById('pwLabel');
+  pwInput.addEventListener('input', () => {
+    const v = pwInput.value;
+    let score = 0;
+    if (v.length >= 8) score++;
+    if (/[A-Z]/.test(v)) score++;
+    if (/[0-9]/.test(v)) score++;
+    if (/[^A-Za-z0-9]/.test(v)) score++;
+    bars.forEach((b, i) => {
+      b.className = 'pw-bar';
+      if (i < score) b.classList.add(score <= 1 ? 'weak' : score <= 2 ? 'fair' : 'strong');
+    });
+    pwLabel.textContent = v.length === 0 ? '' : score <= 1 ? 'Weak' : score <= 2 ? 'Fair' : score === 3 ? 'Good' : 'Strong';
+    pwLabel.style.color = score <= 1 ? '#e05252' : score <= 2 ? '#e8a23a' : '#4caf50';
+  });
+
+  // Toast notification
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    document.getElementById('toastMsg').textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3500);
+  }
+
+  document.getElementById('loginBtn').addEventListener('click', () => {
+    const email = document.getElementById('loginEmail').value;
+    const pass = document.getElementById('loginPassword').value;
+    if (!email || !pass) { showToast('Please fill in all fields.'); return; }
+    closeModal('loginModal');
+    setTimeout(() => showToast('Welcome back! You are now signed in. ✦'), 400);
+  });
+
+  document.getElementById('signupBtn').addEventListener('click', () => {
+    if (!document.getElementById('agreeTerms').checked) {
+      showToast('Please agree to our Terms to continue.'); return;
+    }
+    closeModal('signupModal');
+    setTimeout(() => showToast('Account created! Your scholarship journey begins. ✦'), 400);
+  });
+
+  // Also trigger signup from hero CTA
+  document.querySelector('.btn-primary') && document.querySelector('.btn-primary').addEventListener('click', e => {
+    e.preventDefault(); openModal('signupModal');
+  });
+
+  // Search tag select
+  document.querySelectorAll('.search-tag').forEach(tag => {
+    tag.addEventListener('click', () => {
+      tag.style.borderColor = 'var(--gold)';
+      tag.style.color = 'var(--gold)';
+      setTimeout(() => {
+        tag.style.borderColor = '';
+        tag.style.color = '';
+      }, 1200);
+    });
+  });
+</script>
+</body>
+</html>
